@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const sum = digits.reduce((sum, digit) => sum + parseInt(digit), 0);
                     return sum >= 15 && sum <= 40;
                 },
-                 
+                hint: "Rakamların toplamı 15 ile 40 arasında olmalı!"
             }
         ],
         // Level 2: Intermediate rules
@@ -233,3 +233,341 @@ document.addEventListener('DOMContentLoaded', () => {
                 hint: "Şifrenize +, -, * veya / sembollerinden birini ekleyin!"
             }
         ],
+        // Level 3: Advanced rules
+        [
+            { 
+                id: 11, 
+                description: "Şifreniz 'Q' ve 'W' harflerini ardışık içermemeli.", 
+                validate: password => !password.toUpperCase().includes("QW") && !password.toUpperCase().includes("WQ"),
+                hint: "Q ve W harflerini yan yana kullanmayın!"
+            },
+            { 
+                id: 12, 
+                description: "Şifreniz 'AAA' gibi aynı karakterin üç kez tekrarını içermemeli.", 
+                validate: password => !/(.)\1\1/.test(password),
+                hint: "Aynı karakteri üç kez tekrar etmeyin!"
+            },
+            { 
+                id: 13, 
+                description: "Şifrenizde en az bir Türk takımı kısaltması olmalı. (GS, FB, BJK, TS)", 
+                validate: password => {
+                    const teams = ["GS", "FB", "BJK", "TS"];
+                    return teams.some(team => password.toUpperCase().includes(team));
+                },
+                hint: "Bir futbol takımı kısaltması ekleyin (GS, FB, BJK, TS)"
+            },
+            { 
+                id: 14, 
+                description: "Şifreniz en az bir satranç taşı sembolünü içermeli. (♔, ♕, ♖, ♗, ♘, ♙)", 
+                validate: password => /[♔♕♖♗♘♙♚♛♜♝♞♟]/.test(password),
+                hint: "Bir satranç taşı sembolü ekleyin: ♔, ♕, ♖, ♗, ♘, ♙"
+            },
+            { 
+                id: 15, 
+                description: "Şifrenizde en az bir Türkçe özel karakter bulunmalı. (ç, ş, ı, ğ, ö, ü, İ)", 
+                validate: password => /[çşıöüğİ]/i.test(password),
+                hint: "Türkçe karakter ekleyin (ç, ş, ı, ğ, ö, ü, İ)"
+            }
+        ],
+        // Level 4: Expert rules
+        [
+            { 
+                id: 16, 
+                description: "Şifrenizde bir tarih formatı bulunmalı. (GG.AA.YYYY veya GG/AA/YYYY)", 
+                validate: password => /\d{2}[\.\/]\d{2}[\.\/]\d{4}/.test(password),
+                hint: "Bir tarih ekleyin (örn: 01.01.2000 veya 01/01/2000)"
+            },
+            { 
+                id: 17, 
+                description: "Şifreniz bir renk adı içermeli. (mavi, kırmızı, vb.)", 
+                validate: password => {
+                    const colors = ["mavi", "kırmızı", "yeşil", "sarı", "siyah", "beyaz", "mor", "pembe", "turuncu", "gri", "kahverengi", "lacivert", "turkuaz"];
+                    return colors.some(color => password.toLowerCase().includes(color.toLowerCase()));
+                },
+                hint: "Bir renk adı ekleyin (mavi, kırmızı, yeşil, vb.)"
+            },
+            { 
+                id: 18, 
+                description: "Şifreniz 'XYZ' harflerini bu sırada içermeli.", 
+                validate: password => password.toUpperCase().includes("XYZ"),
+                hint: "XYZ harflerini bu sırada ekleyin!"
+            },
+            { 
+                id: 19, 
+                description: "Şifreniz bir çift ve bir tek rakam yan yana içermeli.", 
+                validate: password => {
+                    const evenOddPattern = /([02468][13579])|([13579][02468])/;
+                    return evenOddPattern.test(password);
+                },
+                hint: "Bir çift rakam (0,2,4,6,8) ve bir tek rakam (1,3,5,7,9) yan yana olmalı"
+            },
+            { 
+                id: 20, 
+                description: "Şifrenizde karakter sayısı asal olmalı.", 
+                validate: password => {
+                    // Asal sayı kontrolü
+                    const length = password.length;
+                    if (length < 2) return false;
+                    for (let i = 2; i <= Math.sqrt(length); i++) {
+                        if (length % i === 0) return false;
+                    }
+                    return true;
+                },
+                hint: "Şifrenizin karakter sayısı asal olmalı (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47...)"
+            },
+            { 
+                id: 21, 
+                description: "Tüm kuralları karşılayan şifreyi not edin. Bu, şifre ustası yolculuğunuzu tamamladığınızın kanıtı olacak!", 
+                validate: password => true,
+                hint: "Tebrikler! Bu kural, tüm önceki kuralları karşıladığınızı göstermeniz içindir."
+            }
+        ]
+    ];
+
+    // Zorluk modları
+    const difficultySettings = {
+        easy: {
+            levels: easyModeLevels,
+            totalRules: 21
+        },
+        hard: {
+            levels: easyModeLevels, // Şimdilik aynı seviyeler (ileride değiştirilebilir)
+            totalRules: 21
+        }
+    };
+
+    // Event listeners for difficulty buttons
+    easyModeButton.addEventListener('click', () => {
+        startGame('easy');
+    });
+
+    hardModeButton.addEventListener('click', () => {
+        startGame('hard');
+    });
+
+    changeDifficultyButton.addEventListener('click', () => {
+        showDifficultyScreen();
+    });
+
+    changeDifficultyEndButton.addEventListener('click', () => {
+        showDifficultyScreen();
+    });
+
+    // Zorluk seçim ekranını göster
+    function showDifficultyScreen() {
+        difficultyScreen.style.display = 'flex';
+        gameScreen.style.display = 'none';
+        completeModal.classList.remove('show');
+        successModal.classList.remove('show');
+    }
+
+    // Oyunu başlat
+    function startGame(difficulty) {
+        currentDifficulty = difficulty;
+        difficultyScreen.style.display = 'none';
+        gameScreen.style.display = 'block';
+        
+        // Zorluk göstergesini güncelle
+        currentDifficultySpan.textContent = difficulty === 'easy' ? 'Kolay Mod' : 'Zor Mod';
+        document.body.classList.toggle('hard-mode', difficulty === 'hard');
+        
+        // Toplam kural sayısını güncelle
+        totalRulesSpan.textContent = difficultySettings[difficulty].totalRules;
+        
+        // Oyunu sıfırla ve başlat
+        initGame();
+    }
+
+    // Initialize the game
+    function initGame() {
+        currentLevel = 1;
+        currentRuleIndex = 0;
+        loadLevel(currentLevel);
+        updateUI();
+    }
+
+    // Load rules for a specific level
+    function loadLevel(level) {
+        rules = difficultySettings[currentDifficulty].levels[level - 1];
+        
+        // Reset active rules list
+        activeRules = [];
+        
+        // For Level 1, start with only one rule
+        // For other levels, start with all rules from previous levels plus one new rule
+        if (level === 1) {
+            activeRules.push(rules[0]);
+        } else {
+            // Add all rules from previous levels
+            for (let i = 0; i < level - 1; i++) {
+                activeRules = [...activeRules, ...difficultySettings[currentDifficulty].levels[i]];
+            }
+            // Add first rule from current level
+            activeRules.push(rules[0]);
+        }
+        
+        currentRuleIndex = 0;
+    }
+
+    // Update the UI with current rules and level info
+    function updateUI() {
+        levelSpan.textContent = currentLevel;
+        
+        // Toplam kural sayısını zorluk seviyesine göre al
+        let totalRulesCount = difficultySettings[currentDifficulty].totalRules;
+        
+        // Calculate current rule count
+        let activeRuleCount = 0;
+        for (let i = 0; i < currentLevel - 1; i++) {
+            activeRuleCount += difficultySettings[currentDifficulty].levels[i].length;
+        }
+        activeRuleCount += currentRuleIndex + 1;
+        
+        ruleCountSpan.textContent = activeRuleCount;
+        
+        // Clear and rebuild rules list
+        rulesList.innerHTML = '';
+        
+        activeRules.forEach(rule => {
+            const ruleElement = document.createElement('div');
+            ruleElement.className = 'rule-item';
+            ruleElement.dataset.ruleId = rule.id; // Rule ID'si atama
+            
+            // Enhanced rule HTML structure with icons
+            ruleElement.innerHTML = `
+                <div class="rule-title">
+                    <strong>Kural ${rule.id}:</strong> ${rule.description}
+                </div>
+                ${rule.hint ? `
+                <p class="hint">
+                    <i class="fas fa-lightbulb"></i> İpucu: ${rule.hint}
+                </p>` : ''}
+            `;
+            
+            rulesList.appendChild(ruleElement);
+        });
+
+        // Şifreden bağımsız olarak UI'yi sıfırla
+        if (passwordInput.value) {
+            checkPassword(true);
+        }
+    }
+
+    // Check if password satisfies all active rules
+    function checkPassword(isInitial = false) {
+        const password = passwordInput.value;
+        
+        // Eğer şifre değişmediyse ve başlangıç kontrolü değilse işlemi atla
+        if (password === prevPassword && !isInitial) {
+            return;
+        }
+        
+        // Şifreyi güncelle
+        prevPassword = password;
+        
+        let allRulesSatisfied = true;
+        let rulesSatisfiedCount = 0;
+        
+        activeRules.forEach((rule, index) => {
+            // DOM elementini bul
+            const ruleElement = document.querySelector(`.rule-item[data-rule-id="${rule.id}"]`);
+            if (!ruleElement) return;
+            
+            const isSatisfied = rule.validate(password);
+            
+            if (isSatisfied) {
+                const wasPreviouslySatisfied = ruleElement.classList.contains('success');
+                ruleElement.className = 'rule-item success';
+                // Add success icon if not already there
+                if (!ruleElement.querySelector('.rule-status-icon')) {
+                    const statusIcon = document.createElement('div');
+                    statusIcon.className = 'rule-status-icon';
+                    statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    ruleElement.appendChild(statusIcon);
+                } else {
+                    const statusIcon = ruleElement.querySelector('.rule-status-icon');
+                    statusIcon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                }
+                
+                // Yeni tamamlanan kural için ses çal
+                if (!wasPreviouslySatisfied && !isInitial) {
+                    playSound(successSound);
+                }
+                
+                rulesSatisfiedCount++;
+            } else {
+                ruleElement.className = 'rule-item error';
+                // Add error icon if not already there
+                if (!ruleElement.querySelector('.rule-status-icon')) {
+                    const statusIcon = document.createElement('div');
+                    statusIcon.className = 'rule-status-icon';
+                    statusIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                    ruleElement.appendChild(statusIcon);
+                } else {
+                    const statusIcon = ruleElement.querySelector('.rule-status-icon');
+                    statusIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                }
+                allRulesSatisfied = false;
+            }
+        });
+        
+        // Update streamer image and quote based on result
+        if (allRulesSatisfied && password !== "") {
+            // setStreamerMood fonksiyonunu kaldırıyoruz
+            
+            // Check if this was the last rule in this level
+            if (currentRuleIndex >= rules.length - 1) {
+                // Level complete
+                // setStreamerMood fonksiyonunu kaldırıyoruz
+                if (currentLevel === difficultySettings[currentDifficulty].levels.length) {
+                    // Game complete
+                    completeModal.classList.add('show');
+                    playSound(gameCompleteSound);
+                    // setStreamerMood fonksiyonunu kaldırıyoruz
+                } else {
+                    // Move to next level
+                    successModal.classList.add('show');
+                    playSound(levelUpSound);
+                }
+            } else {
+                // Add next rule for this level
+                currentRuleIndex++;
+                activeRules.push(rules[currentRuleIndex]);
+                updateUI();
+            }
+        } else if (password === "") {
+            // Şifre boşsa varsayılan durum
+            // setStreamerMood fonksiyonunu kaldırıyoruz
+        } else {
+            // Not all rules satisfied
+            // setStreamerMood fonksiyonunu kaldırıyoruz
+        }
+    }
+    
+    // Event Listeners
+    passwordInput.addEventListener('input', () => checkPassword());
+    
+    nextLevelButton.addEventListener('click', () => {
+        currentLevel++;
+        // Şifreyi saklayalım
+        const currentPassword = passwordInput.value;
+        loadLevel(currentLevel);
+        updateUI();
+        successModal.classList.remove('show');
+        // Seviye geçişinde şifreyi geri koyalım
+        passwordInput.value = currentPassword;
+        prevPassword = currentPassword;
+        // setStreamerMood('default'); // Kaldırıldı
+    });
+    
+    restartGameButton.addEventListener('click', () => {
+        completeModal.classList.remove('show');
+        initGame();
+        passwordInput.value = '';
+        prevPassword = ''; // Şifre geçmişini sıfırla
+        // setStreamerMood('default'); // Kaldırıldı
+    });
+    
+    // İlk yüklemede zorluk seçim ekranını göster
+    showDifficultyScreen();
+});
