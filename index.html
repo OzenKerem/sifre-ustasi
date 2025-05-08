@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şifre Ustası | Türkçe Şifre Oyunu</title>
+    <meta name="description" content="Şifre Ustası, şifre oluşturma kurallarını eğlenceli bir oyun haline getiren Türkçe bir şifre oyunudur.">
+    
+    <!-- PWA için meta etiketleri -->
+    <meta name="theme-color" content="#4361ee">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Şifre Ustası">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192x192.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    
+    <!-- Önce Google Fonts yükleniyor -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Sonra Font Awesome ikonları yükleniyor -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- En son kendi stil dosyamız yükleniyor -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Zorluk seçimi ekranı -->
+    <div class="difficulty-screen" id="difficultyScreen">
+        <div class="container">
+            <div class="game-header">
+                <h1>ŞİFRE USTASI</h1>
+                <p>Şifre oluşturma oyununa hoş geldiniz!</p>
+            </div>
+            
+            <div class="difficulty-selection">
+                <h2>Zorluk Seviyesi Seçin</h2>
+                <p>Hangi zorluk seviyesinde oynamak istersiniz?</p>
+                
+                <div class="difficulty-buttons">
+                    <button id="easyMode" class="difficulty-btn">
+                        <i class="fas fa-smile"></i>
+                        <span>Kolay</span>
+                        <small>21 Kural</small>
+                    </button>
+                    
+                    <button id="hardMode" class="difficulty-btn">
+                        <i class="fas fa-fire"></i>
+                        <span>Zor</span>
+                        <small>30 Kural</small>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Oyun ekranı -->
+    <div class="game-screen" id="gameScreen" style="display: none;">
+        <div class="container">
+            <div class="game-header">
+                <h1>ŞİFRE USTASI</h1>
+                <p>Kurallara uyan bir şifre oluşturun</p>
+                <div class="difficulty-indicator">
+                    <span id="currentDifficulty">Kolay Mod</span>
+                    <button id="changeDifficulty" class="small-btn"><i class="fas fa-sync-alt"></i> Zorluk Değiştir</button>
+                </div>
+            </div>
+            
+            <div class="game-content">
+                <div class="password-section">
+                    <div class="input-container">
+                        <label for="password">
+                            Lütfen bir şifre yazın:
+                            <span class="info-text"><i class="fas fa-info-circle"></i> Şifreniz anında kontrol edilecektir</span>
+                        </label>
+                        <div class="input-wrapper">
+                            <input type="text" id="password" autocomplete="off" placeholder="Şifrenizi buraya yazın...">
+                        </div>
+                        
+                        <!-- Şifre Gücü Göstergesi -->
+                        <div class="password-strength">
+                            <div class="password-strength-bar" id="strengthBar"></div>
+                            <div class="password-strength-text" id="strengthText">Şifre gücü: -</div>
+                            <div class="password-strength-label" id="strengthLabel"></div>
+                        </div>
+                    </div>
+                    <div class="level-info">
+                        <div class="level-badge">
+                            <i class="fas fa-layer-group"></i>
+                            Seviye: <span id="level">1</span>
+                        </div>
+                        <div class="rule-badge">
+                            <i class="fas fa-check-circle"></i>
+                            Kural: <span id="ruleCount">1</span>/<span id="totalRules">21</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="rules-container">
+                    <div class="rules-header">
+                        <i class="fas fa-list-check"></i> Şifre Kuralları:
+                    </div>
+                    <div class="rules-list" id="rulesList">
+                        <!-- Rules will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="modal-icon success-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2>Tebrikler!</h2>
+            <p>Seviye tamamlandı. Devam etmek için hazır mısın?</p>
+            <button id="nextLevel">Sonraki Seviye <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div class="modal" id="completeModal">
+        <div class="modal-content">
+            <div class="modal-icon complete-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h2>Oyunu Tamamladın!</h2>
+            <p>Tüm seviyeleri başarıyla geçtin. Sen gerçek bir şifre ustasısın!</p>
+            <div class="button-group">
+                <button id="restartGame">Yeniden Başla <i class="fas fa-rotate"></i></button>
+                <button id="changeDifficultyEnd" class="secondary-btn">Zorluk Değiştir <i class="fas fa-exchange-alt"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tema Değiştirici Düğme -->
+    <div class="theme-switcher" id="themeSwitcher">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+
+    <script src="script.js"></script>
+    <!-- PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                    console.log('Service worker registered!', reg);
+                }).catch(err => {
+                    console.log('Service worker registration failed: ', err);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
