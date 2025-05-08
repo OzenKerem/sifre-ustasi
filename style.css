@@ -1,0 +1,249 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Açık mod (varsayılan) renkleri */
+    --primary-color: #4361ee;
+    --secondary-color: #3a0ca3;
+    --success-color: #06d6a0;
+    --error-color: #ef476f;
+    --neutral-dark: #2b2d42;
+    --neutral-medium: #8d99ae;
+    --neutral-light: #edf2f4;
+    --bg-color: #edf2f4;
+    --container-bg: #ffffff;
+    --text-color: #2b2d42;
+    --gradient-bg: linear-gradient(135deg, #4361ee, #3a0ca3);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --transition: all 0.3s ease;
+}
+
+/* Karanlık mod renkleri */
+.dark-theme {
+    --primary-color: #738bff;
+    --secondary-color: #6029e4;
+    --success-color: #06d6a0;
+    --error-color: #ff6b93;
+    --neutral-dark: #e1e3f0;
+    --neutral-medium: #9ba4b4;
+    --neutral-light: #2a2d3a;
+    --bg-color: #1a1c25;
+    --container-bg: #2a2d3a;
+    --text-color: #e1e3f0;
+    --gradient-bg: linear-gradient(135deg, #5d79ff, #5029b8);
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 20px 0;
+    transition: var(--transition);
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 30px;
+    background-color: var(--container-bg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+/* Tema değiştirici */
+.theme-switcher {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--gradient-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+}
+
+.theme-switcher:hover {
+    transform: scale(1.1);
+}
+
+.theme-switcher i {
+    color: white;
+    font-size: 1.5rem;
+}
+
+/* Şifre Gücü Göstergesi */
+.password-strength {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    background-color: var(--neutral-light);
+    position: relative;
+}
+
+.password-strength-bar {
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(to right, #ff4d4d, #ffbb33, #00c851);
+    width: 0%;
+    transition: width 0.5s ease;
+}
+
+.password-strength-text {
+    margin-top: 5px;
+    font-size: 0.85rem;
+    color: var(--neutral-medium);
+}
+
+.password-strength-label {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Animasyonları İyileştir */
+@keyframes pulse-success {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(6, 214, 160, 0.4);
+    }
+    70% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 10px rgba(6, 214, 160, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(6, 214, 160, 0);
+    }
+}
+
+.rule-item.success {
+    animation: pulse-success 1s;
+}
+
+/* Mobil Optimize Edilmiş Stiller */
+@media (max-width: 767px) {
+    .container {
+        margin: 10px;
+        padding: 20px;
+        border-radius: var(--radius-md);
+    }
+    
+    .game-header h1 {
+        font-size: 2rem;
+    }
+    
+    .level-info {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    
+    .modal-content {
+        padding: 20px;
+    }
+    
+    .difficulty-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .difficulty-btn {
+        width: 100%;
+        max-width: 280px;
+        height: 180px;
+        padding: 20px;
+    }
+    
+    .input-container {
+        position: sticky;
+        top: 0;
+        background-color: var(--container-bg);
+        z-index: 10;
+        padding: 10px 0;
+        margin-bottom: 15px;
+    }
+    
+    .theme-switcher {
+        bottom: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+    }
+}
+
+.game-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--neutral-light);
+    position: relative;
+}
+
+.game-header::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--gradient-bg);
+    border-radius: 2px;
+}
+
+.game-header h1 {
+    font-size: 2.75rem;
+    background: var(--gradient-bg);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 12px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.game-header p {
+    font-size: 1.1rem;
+    color: var(--neutral-medium);
+}
+
+.game-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+}
+
+@media (min-width: 768px) {
+    .game-content {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.password-section {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--neutral-light);
+    margin-bottom: 20px;
+}
